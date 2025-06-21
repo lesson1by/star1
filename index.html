@@ -12,14 +12,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Favicon and App Icons -->
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
-    <link rel="shortcut icon" href="assets/favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="assets/android-chrome-192x192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="assets/android-chrome-512x512.png">
-    <link rel="manifest" href="assets/site.webmanifest">
     <style>
         header {
             background-color: #fff;
@@ -539,13 +531,13 @@
         <div class="container">
             <div class="form-container">
                 <h2>Заказать выступление</h2>
-                <form id="request-form" novalidate autocomplete="off">
+                <form id="request-form" novalidate>
                     <div class="form-group">
-                        <input type="text" id="name-input" placeholder="Ваше имя" required autocomplete="off">
+                        <input type="text" id="name-input" placeholder="Ваше имя" required>
                         <div class="field-error" id="name-error" style="display: none;">Пожалуйста, введите ваше имя</div>
                     </div>
                     <div class="form-group">
-                        <input type="tel" id="phone" placeholder="Телефон" required pattern="\+7\s?\(\d{3}\)\s?\d{3}-\d{2}-\d{2}" value="+7 " autocomplete="off">
+                        <input type="tel" id="phone" placeholder="Телефон" required pattern="\+7\s?\(\d{3}\)\s?\d{3}-\d{2}-\d{2}" value="+7 ">
                         <div class="field-error" id="phone-error" style="display: none;">Пожалуйста, введите корректный номер телефона</div>
                     </div>
                     
@@ -553,7 +545,7 @@
                         <div class="form-group">
                             <label>Выберите категорию:</label>
                             <div class="custom-select-wrapper">
-                                <select id="category" class="hidden-select" required autocomplete="off">
+                                <select id="category" class="hidden-select" required>
                                     <option value="" selected>Не выбрано</option>
                                     <option value="stars">Звёзды</option>
                                     <option value="fairytale">Сказка на лапках</option>
@@ -614,7 +606,7 @@
                     
                     <div class="form-group">
                         <div class="custom-select-wrapper">
-                            <select id="program" class="hidden-select" required disabled autocomplete="off">
+                            <select id="program" class="hidden-select" required disabled>
                                 <option value="" disabled selected>Выберите программу</option>
                             </select>
                             <div class="custom-select disabled">
@@ -1610,6 +1602,108 @@
                 });
             }
         });
+    </script>
+    
+    <script>
+        // Функция для создания эффекта конфетти при успешной отправке формы
+        function createConfetti(cleanupMode) {
+            // First remove any existing confetti to prevent artifacts
+            document.querySelectorAll('.confetti').forEach(el => el.remove());
+            
+            const formContainer = document.querySelector('.form-container');
+            const rect = formContainer.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            // Создаем 100 частиц конфетти
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                // Случайный цвет из яркой палитры
+                const colors = ['#e71d36', '#2ec4b6', '#ff9f1c', '#facf5a', '#3da5d9', '#bf76af', '#7cdf64'];
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Случайный размер
+                const size = Math.random() * 10 + 6;
+                
+                // Случайная форма (круг или квадрат)
+                const isCircle = Math.random() > 0.5;
+                
+                // Стилизуем частицу
+                confetti.style.position = 'fixed';
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                confetti.style.backgroundColor = randomColor;
+                confetti.style.borderRadius = isCircle ? '50%' : '3px';
+                confetti.style.opacity = Math.random() * 0.5 + 0.5;
+                confetti.style.zIndex = '9999';
+                confetti.style.pointerEvents = 'none';
+                
+                // Начальная позиция - центр формы
+                confetti.style.left = `${centerX}px`;
+                confetti.style.top = `${centerY}px`;
+                
+                // Добавляем на страницу
+                document.body.appendChild(confetti);
+                
+                // Создаем анимацию разлета в случайном направлении
+                const angle = Math.random() * Math.PI * 2; // Случайный угол в радианах
+                const velocity = Math.random() * 7 + 3; // Случайная скорость
+                const velocityX = Math.cos(angle) * velocity;
+                const velocityY = Math.sin(angle) * velocity - 2; // Небольшое ускорение вверх
+                
+                // Начальное вращение и скорость вращения
+                let rotation = Math.random() * 360;
+                const rotationSpeed = Math.random() * 10 - 5;
+                
+                // Анимируем движение
+                let posX = centerX;
+                let posY = centerY;
+                
+                function animateConfetti() {
+                    if (!document.body.contains(confetti)) return;
+                    
+                    // Добавляем гравитацию
+                    velocityY += 0.1;
+                    
+                    // Обновляем позицию
+                    posX += velocityX;
+                    posY += velocityY;
+                    rotation += rotationSpeed;
+                    
+                    // Применяем новую позицию и вращение
+                    confetti.style.left = `${posX}px`;
+                    confetti.style.top = `${posY}px`;
+                    confetti.style.transform = `rotate(${rotation}deg)`;
+                    
+                    // Уменьшаем прозрачность со временем
+                    confetti.style.opacity = parseFloat(confetti.style.opacity) - 0.005;
+                    
+                    // Автоматически удаляем все конфетти через 5 секунд для предотвращения артефактов
+                    setTimeout(() => {
+                        if (document.body.contains(confetti)) {
+                            confetti.remove();
+                        }
+                    }, 5000);
+                    
+                    // Удаляем, когда конфетти выходит за пределы экрана или становится невидимым
+                    if (posY > window.innerHeight || 
+                        posX < 0 || 
+                        posX > window.innerWidth || 
+                        parseFloat(confetti.style.opacity) <= 0) {
+                        confetti.remove();
+                    } else {
+                        requestAnimationFrame(animateConfetti);
+                    }
+                }
+                
+                // Запускаем анимацию с небольшой задержкой для каждой частицы
+                setTimeout(() => {
+                    requestAnimationFrame(animateConfetti);
+                }, Math.random() * 500);
+            }
+        }
     </script>
 </body>
 </html>
