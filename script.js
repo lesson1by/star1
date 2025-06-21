@@ -897,3 +897,38 @@ document.addEventListener('DOMContentLoaded', function() {
         showProgramsForCharacter(firstStarId);
     }
 });
+
+document.addEventListener('click', function(event) {
+    // Закрыть бургер-меню, если клик вне меню и вне бургера
+    const burger = document.querySelector('.burger');
+    const navLinks = document.querySelector('.nav-links');
+    if (navLinks && burger && navLinks.classList.contains('nav-active')) {
+        if (!navLinks.contains(event.target) && !burger.contains(event.target)) {
+            navLinks.classList.remove('nav-active');
+            burger.classList.remove('toggle');
+        }
+    }
+    // Закрыть все кастомные select, если клик вне них
+    document.querySelectorAll('.custom-select.open').forEach(select => {
+        if (!select.contains(event.target)) {
+            select.classList.remove('open');
+        }
+    });
+    // Закрыть модалку артиста, если клик вне модалки
+    const modal = document.getElementById('artistModal');
+    if (modal && modal.classList.contains('active')) {
+        if (!modal.contains(event.target) && event.target !== modal) {
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.style.display = 'none';
+                document.body.classList.remove('modal-open');
+            }, 300);
+        }
+    }
+    // Закрыть другие overlay, если они есть (пример)
+    document.querySelectorAll('.overlay').forEach(overlay => {
+        if (overlay.style.display === 'block' && !overlay.contains(event.target)) {
+            overlay.style.display = 'none';
+        }
+    });
+});
