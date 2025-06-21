@@ -1,4 +1,3 @@
-// Упрощенный скрипт для сайта "Звездные Гости"
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Страница полностью загружена');
     
@@ -150,25 +149,6 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // 4. ОБРАБОТКА НАВИГАЦИИ
-    const navLinks = document.querySelector('.nav-links');
-    const burger = document.querySelector('.burger');
-
-    if (burger && navLinks) {
-        burger.addEventListener('click', () => {
-            navLinks.classList.toggle('nav-active');
-            burger.classList.toggle('toggle');
-        });
-
-        // Закрытие меню при клике на ссылку (для мобильных)
-        navLinks.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('nav-active');
-                burger.classList.remove('toggle');
-            });
-        });
-    }
-
-    // Обработка клика на элементе навигации "Программы"
     const programsNavLink = document.querySelector('.nav-links a[href="#programs"]');
     if (programsNavLink) {
         programsNavLink.addEventListener('click', function(e) {
@@ -817,48 +797,4 @@ document.addEventListener('DOMContentLoaded', function() {
     if (firstStarId) {
         showProgramsForCharacter(firstStarId);
     }
-
-    // === БУРГЕР-МЕНЮ ДЛЯ МОБИЛЬНОЙ НАВИГАЦИИ ===
-    const burger = document.querySelector('.burger');
-    const nav = document.querySelector('.nav-links');
-    const navLinks = document.querySelectorAll('.nav-links li');
-
-    if (burger && nav) {
-        burger.addEventListener('click', function() {
-            nav.classList.toggle('nav-active');
-            burger.classList.toggle('toggle');
-        });
-        // При клике на ссылку меню — закрываем меню
-        navLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                nav.classList.remove('nav-active');
-                burger.classList.remove('toggle');
-            });
-        });
-    }
-
-    // === ПЛАВНЫЙ СКРОЛЛ С УЧЁТОМ ФИКСИРОВАННОГО ХЕДЕРА ===
-    const header = document.querySelector('header');
-    const headerHeight = header ? header.offsetHeight : 70;
-    document.querySelectorAll('.nav-links a[href^="#"]').forEach(link => {
-        link.addEventListener('click', function(e) {
-            const targetId = this.getAttribute('href').replace('#', '');
-            const target = document.getElementById(targetId);
-            if (target) {
-                e.preventDefault();
-                const y = target.getBoundingClientRect().top + window.pageYOffset - headerHeight;
-                window.scrollTo({ top: y, behavior: 'smooth' });
-                // Закрываем мобильное меню, если оно открыто
-                if (nav.classList.contains('nav-active')) {
-                    nav.classList.remove('nav-active');
-                    burger.classList.remove('toggle');
-                }
-            }
-        });
-    });
-
-    // Отключаем автозаполнение для всех input и select (чтобы убрать артефакт Chrome)
-    document.querySelectorAll('input, select').forEach(el => {
-        el.setAttribute('autocomplete', 'off');
-    });
 }); 
