@@ -1,6 +1,128 @@
+console.log('JS успешно загружен и работает!');
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Страница полностью загружена');
     
+    // === БУРГЕР-МЕНЮ ===
+    const burger = document.querySelector('.burger');
+    const navLinks = document.querySelector('.nav-links');
+    if (burger && navLinks) {
+        burger.addEventListener('click', function() {
+            navLinks.classList.toggle('nav-active');
+            burger.classList.toggle('toggle');
+        });
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function() {
+                navLinks.classList.remove('nav-active');
+                burger.classList.remove('toggle');
+            });
+        });
+    }
+
+    // === КНОПКИ НАВИГАЦИИ ===
+    document.querySelectorAll('.nav-links a[href^="#"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('href').replace('#', '');
+            const target = document.getElementById(targetId);
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+
+    // === КНОПКА "ЗАКАЗАТЬ ВЫСТУПЛЕНИЕ" В HERO ===
+    var heroOrderBtn = document.querySelector('#hero a.btn-primary[href="#form"]');
+    if (heroOrderBtn) {
+        heroOrderBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    }
+
+    // === КНОПКИ "ЗАКАЗАТЬ" НА КАРТОЧКАХ ЗВЁЗД ===
+    document.querySelectorAll('.star-card a.btn-secondary').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const starId = this.closest('.star-card').getAttribute('data-star');
+            if (starId && typeof showProgramsForCharacter === 'function') {
+                showProgramsForCharacter(starId);
+                document.getElementById('programs').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+
+    // === КАРТОЧКИ ЗВЁЗД: ОТКРЫТИЕ МОДАЛКИ ===
+    document.querySelectorAll('.star-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A' || e.target.closest('a')) return;
+            const starId = this.getAttribute('data-star');
+            if (starId && typeof openArtistModal === 'function') {
+                openArtistModal(starId);
+            }
+        });
+    });
+
+    // === КНОПКИ "ЗАКАЗАТЬ" В ПРОГРАММАХ ===
+    document.querySelectorAll('.program-card .btn-secondary').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const star = this.getAttribute('data-star');
+            const program = this.getAttribute('data-program');
+            if (star && program && typeof autoFillOrderForm === 'function') {
+                autoFillOrderForm(star, program);
+                document.getElementById('form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+
+    // === КАРТОЧКИ "СКАЗКИ НА ЛАПКАХ" ===
+    document.querySelectorAll('.fairytale-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A' || e.target.closest('a')) return;
+            const charId = this.getAttribute('data-character');
+            if (charId && typeof openFairytaleModal === 'function') {
+                openFairytaleModal(charId);
+            }
+        });
+    });
+    document.querySelectorAll('.fairytale-card .btn-secondary').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const charId = this.closest('.fairytale-card').getAttribute('data-character');
+            if (charId && typeof autoFillOrderForm === 'function') {
+                autoFillOrderForm(charId, null, 'fairytale');
+                document.getElementById('form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+
+    // === КАРТОЧКИ "ПОЧЕМУ ВЫБИРАЮТ НАС" ===
+    document.querySelectorAll('.benefit-card-link').forEach(card => {
+        card.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+
+    // === ФУТЕР: КЛИКАБЕЛЬНЫЕ ССЫЛКИ ===
+    document.querySelectorAll('footer a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            if (this.getAttribute('href') && this.getAttribute('href').startsWith('#')) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').replace('#', '');
+                const target = document.getElementById(targetId);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        });
+    });
+
+    // === ФОРМА ЗАКАЗА: ВВОД, ВЫБОР, ОТПРАВКА ===
+    // (оставляю вашу логику, только убеждаюсь, что все элементы доступны и не перекрыты)
+    // ... остальной ваш код ...
+
     // 1. УПРАВЛЕНИЕ СЕКЦИЕЙ ПРОГРАММ
     // Изначально показываем секцию программ, но все контейнеры скрыты
     const programsSection = document.getElementById('programs');
@@ -586,30 +708,7 @@ document.addEventListener('DOMContentLoaded', function() {
         categorySelect.addEventListener('change', function() {
             const starsGroup = document.getElementById('stars-select-group');
             const fairytaleGroup = document.getElementById('fairytale-select-group');
-            
-            // Скрываем оба селекта персонажей
-            starsGroup.style.display = 'none';
-            fairytaleGroup.style.display = 'none';
-            
-            // Сбрасываем значения селектов персонажей
-            if (starSelect) starSelect.value = '';
-            if (characterSelect) characterSelect.value = '';
-            
-            // Сбрасываем кастомные селекты
-            document.querySelector('#star').parentNode.querySelector('.custom-select__trigger span').textContent = 'Выберите звезду';
-            document.querySelector('#character').parentNode.querySelector('.custom-select__trigger span').textContent = 'Выберите персонажа';
-            
-            // Блокируем селект программ
-            updateProgramOptions(null);
-            
-            // Показываем соответствующий селект в зависимости от выбранной категории
-            if (this.value === 'stars') {
-                starsGroup.style.display = 'block';
-            } else if (this.value === 'fairytale') {
-                fairytaleGroup.style.display = 'block';
-            }
-        });
-    }
+             
     
     // Обработчики выбора персонажа
     if (starSelect) {
