@@ -896,4 +896,4 @@ document.addEventListener('DOMContentLoaded', function() {
     if (firstStarId) {
         showProgramsForCharacter(firstStarId);
     }
-}); 
+});
