@@ -1358,36 +1358,40 @@ footer {
 }
 
 @media screen and (max-width: 768px) {
-    header .container {
-        padding: 10px 20px;
-    }
     .nav-links {
-        width: 70%;
+        pointer-events: none;
+        transform: translateX(100%);
+        position: absolute;
+        right: 0;
+        top: 70px;
+        background: #fff;
+        height: calc(100vh - 70px);
+        width: 50%;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 50px;
+        box-shadow: -5px 0 10px rgba(0, 0, 0, 0.1);
     }
-    .nav-links li {
-        margin: 20px 0;
+    
+    .nav-active {
+        pointer-events: auto;
+        transform: translateX(0);
     }
+    
+    .burger {
+        display: block;
+    }
+    
     .hero-content h1 {
         font-size: 2.5rem;
     }
+    
     .hero-content p {
         font-size: 1.1rem;
     }
+    
     .form-container {
         padding: 30px 20px;
-    }
-
-    /* Улучшения для форм на 768px */
-    .form-group {
-        margin-bottom: 25px; /* Уменьшаем отступ между полями формы */
-    }
-    input, select {
-        padding: 12px 15px; /* Уменьшаем отступы внутри полей */
-        height: 50px;
-        font-size: 15px;
-    }
-    .quick-form .btn-primary {
-        padding: 10px 25px; /* Регулируем размер кнопки формы */
     }
 }
 
@@ -1395,95 +1399,66 @@ footer {
     .hero-content h1 {
         font-size: 2rem;
     }
+    
     .section-title {
         font-size: 1.8rem;
     }
+    
     .programs-grid, 
     .stars-grid,
     .benefits-grid {
         grid-template-columns: 1fr;
     }
+    
     .footer-content {
         grid-template-columns: 1fr;
-        padding: 0 20px;
-    }
-    .footer-content > div {
-        margin-bottom: 30px;
-        text-align: center;
-    }
-    .footer-links h4::after {
-        margin: 10px auto 0;
-    }
-    .social-icons {
-        justify-content: center;
-    }
-
-    /* Улучшения для форм и карточек на 576px */
-    .quick-form {
-        padding: 40px 0 80px 0; /* Уменьшаем отступы вокруг формы */
-    }
-    .form-container {
-        padding: 25px 15px; /* Ещё уменьшаем внутренние отступы формы */
-        margin: 0 auto 30px auto; /* Регулируем внешний отступ */
-    }
-    .form-container h2 {
-        font-size: 1.8rem;
-        margin-bottom: 25px;
-    }
-    .star-card, .program-card, .benefit-card {
-        padding: 20px;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .hero-content h1 {
-        font-size: 1.8rem;
-    }
-    .subtitle-text {
-        font-size: 1.2rem;
-    }
-    .animated-text {
-        font-size: 3rem;
-        margin-bottom: 20px;
-    }
-    .hero-content {
-        padding: 0 15px;
-    }
-    .section-title {
-        font-size: 1.6rem;
-        margin-bottom: 40px;
-    }
-    .container {
-        padding: 0 10px;
-    }
-    /* Дальнейшие улучшения для форм и карточек на 480px */
-    input, select {
-        padding: 10px 12px; /* Ещё уменьшаем отступы внутри полей */
-        height: 45px;
-        font-size: 14px;
-    }
-    .quick-form .btn-primary {
-        padding: 8px 20px;
-        font-size: 15px;
-    }
-    .star-card, .program-card, .benefit-card {
-        padding: 15px;
-    }
-    .star-card h3, .program-card h4, .benefit-card h3 {
-        font-size: 1.2rem;
-    }
-    .star-card p, .program-card p, .benefit-card p {
-        font-size: 0.9rem;
     }
 }
 
 /* Состояние загрузки */
 .loading {
-    display: none !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.loading.hidden {
+    opacity: 0;
+    visibility: hidden;
 }
 
 .loader {
-    display: none !important;
+    width: 60px;
+    height: 60px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Анимации для карточек */
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Всплывающие сообщения - улучшенная версия */
@@ -3050,478 +3025,4 @@ section#form {
     background: rgba(233, 65, 76, 0.1);
     color: #e9414c;
     box-shadow: 0 3px 8px rgba(233, 65, 76, 0.2);
-}
-
-/* Убираем браузерные индикаторы автозаполнения и стилизацию для input */
-input:-webkit-autofill,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:active,
-select:-webkit-autofill,
-select:-webkit-autofill:focus,
-select:-webkit-autofill:hover,
-select:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 1000px #fff inset !important;
-    box-shadow: 0 0 0 1000px #fff inset !important;
-    background-color: #fff !important;
-    color: #222 !important;
-    border: 1px solid #e0e0e0 !important;
-    transition: background-color 9999s ease-in-out 0s;
-    caret-color: #e9414c !important;
-}
-
-input:-webkit-autofill::first-line,
-select:-webkit-autofill::first-line {
-    color: #222 !important;
-}
-
-input:-webkit-autofill:focus,
-select:-webkit-autofill:focus {
-    border-color: var(--primary-color) !important;
-    box-shadow: 0 0 0 3px rgba(233, 65, 76, 0.15) !important;
-}
-
-/* --- MOBILE FIXES --- */
-@media screen and (max-width: 400px) {
-  .container {
-    padding: 0 5px;
-  }
-  .hero-content {
-    padding: 10px 0;
-    max-width: 98vw;
-  }
-  .animated-text {
-    font-size: 2.2rem !important;
-    padding: 10px 0;
-    max-width: 98vw;
-  }
-  .hero-content h1 {
-    font-size: 1.3rem !important;
-  }
-  .section-title {
-    font-size: 1.1rem !important;
-    margin-bottom: 30px;
-  }
-  .form-container {
-    padding: 10px 5px !important;
-    max-width: 99vw !important;
-  }
-  .program-card, .star-card, .benefit-card {
-    padding: 10px 5px !important;
-    min-width: 0 !important;
-  }
-  .stars-grid, .programs-grid, .benefits-grid {
-    gap: 10px !important;
-  }
-  .review-photo {
-    width: 90vw !important;
-    height: 40vw !important;
-    min-width: 120px !important;
-    min-height: 80px !important;
-  }
-  .review-text {
-    font-size: 0.9rem !important;
-    padding: 8px 2px !important;
-    max-width: 98vw !important;
-  }
-}
-
-@media screen and (max-width: 576px) {
-  .container {
-    padding: 0 5px;
-  }
-  .hero-content {
-    padding: 10px 0;
-    max-width: 98vw;
-  }
-  .animated-text {
-    font-size: 2.8rem !important;
-    padding: 10px 0;
-    max-width: 98vw;
-  }
-  .hero-content h1 {
-    font-size: 1.5rem !important;
-  }
-  .section-title {
-    font-size: 1.3rem !important;
-    margin-bottom: 30px;
-  }
-  .form-container {
-    padding: 15px 5px !important;
-    max-width: 99vw !important;
-  }
-  .program-card, .star-card, .benefit-card {
-    padding: 10px 5px !important;
-    min-width: 0 !important;
-  }
-  .stars-grid, .programs-grid, .benefits-grid {
-    gap: 10px !important;
-  }
-  .review-photo {
-    width: 90vw !important;
-    height: 40vw !important;
-    min-width: 120px !important;
-    min-height: 80px !important;
-  }
-  .review-text {
-    font-size: 1rem !important;
-    padding: 8px 2px !important;
-    max-width: 98vw !important;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .container {
-    padding: 0 8px;
-  }
-  .stars-grid, .programs-grid, .benefits-grid {
-    grid-template-columns: 1fr !important;
-    gap: 15px !important;
-  }
-  .form-container {
-    padding: 20px 5px !important;
-    max-width: 99vw !important;
-  }
-  .program-card, .star-card, .benefit-card {
-    padding: 15px 5px !important;
-    min-width: 0 !important;
-  }
-  .review-photo {
-    width: 80vw !important;
-    height: 40vw !important;
-    min-width: 120px !important;
-    min-height: 80px !important;
-  }
-  .review-text {
-    font-size: 1.1rem !important;
-    padding: 10px 2px !important;
-    max-width: 98vw !important;
-  }
-  .nav-links {
-    position: absolute;
-    right: 0;
-    top: 60px;
-    width: 80vw;
-    background: #fff;
-    box-shadow: -2px 0 8px rgba(0,0,0,0.08);
-    padding-top: 30px;
-    padding-bottom: 30px;
-    border-radius: 0 0 12px 12px;
-    overflow-x: hidden;
-    transform: translateX(100%);
-    transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
-    z-index: 2000;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .nav-links.nav-active {
-    transform: translateX(0);
-  }
-  .burger {
-    display: block;
-    z-index: 2001;
-  }
-}
-
-/* Убираем горизонтальный скролл на всех устройствах */
-html, body {
-  overflow-x: hidden !important;
-  max-width: 100vw !important;
-}
-
-/* Плавное открытие/закрытие меню */
-.nav-links {
-  transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), width 0.4s cubic-bezier(0.4,0,0.2,1);
-}
-
-/* --- MOBILE DROPDOWN & MODAL FIXES --- */
-@media screen and (max-width: 576px) {
-  /* Выпадающий список программ */
-  .custom-select.open .custom-options,
-  .form-group:nth-child(4) .custom-select.open .custom-options {
-    max-height: 220px !important;
-    min-height: unset !important;
-    height: auto !important;
-    overflow-y: auto !important;
-    width: 100vw !important;
-    left: -10vw !important;
-    border-radius: 0 0 16px 16px !important;
-    font-size: 1rem !important;
-    z-index: 3000 !important;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.10) !important;
-  }
-  .custom-option {
-    font-size: 1rem !important;
-    padding: 12px 10px !important;
-    min-width: 0 !important;
-    word-break: break-word;
-  }
-
-  /* Модальное окно артиста */
-  .modal-content {
-    max-width: 99vw !important;
-    width: 99vw !important;
-    padding: 0 0 10px 0 !important;
-    border-radius: 12px !important;
-    margin: 10px auto 0 auto !important;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.10) !important;
-  }
-  .modal-header {
-    padding: 18px 10px 12px 10px !important;
-    border-radius: 12px 12px 0 0 !important;
-  }
-  .modal-header h2 {
-    font-size: 1.2rem !important;
-    padding-right: 40px !important;
-    word-break: break-word;
-  }
-  .close-modal {
-    top: 8px !important;
-    right: 8px !important;
-    width: 36px !important;
-    height: 36px !important;
-    font-size: 1.5rem !important;
-    background: #e71d36 !important;
-    color: #fff !important;
-    z-index: 3001 !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.10) !important;
-  }
-  .modal-body {
-    flex-direction: column !important;
-    padding: 0 0 10px 0 !important;
-  }
-  .modal-image {
-    width: 100% !important;
-    min-height: 120px !important;
-    max-height: 180px !important;
-    border-radius: 12px 12px 0 0 !important;
-    overflow: hidden !important;
-  }
-  .modal-image img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    border-radius: 12px 12px 0 0 !important;
-  }
-  .modal-info {
-    padding: 12px 10px 10px 10px !important;
-    font-size: 1rem !important;
-  }
-  #modalDescription {
-    font-size: 0.95rem !important;
-    margin-bottom: 18px !important;
-    padding-bottom: 10px !important;
-  }
-  #modalDescription:after {
-    width: 40px !important;
-    height: 2px !important;
-  }
-  .price-list:before {
-    font-size: 1rem !important;
-    margin-bottom: 10px !important;
-  }
-  .price-item {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    padding: 10px 5px !important;
-    margin-bottom: 8px !important;
-    border-radius: 8px !important;
-    font-size: 1rem !important;
-  }
-  .price-item strong {
-    font-size: 1rem !important;
-    margin-bottom: 2px !important;
-  }
-  .price-item span, .price-tag {
-    font-size: 1rem !important;
-    padding: 6px 10px !important;
-    border-radius: 6px !important;
-    margin-left: 0 !important;
-    margin-top: 2px !important;
-    display: block !important;
-    text-align: left !important;
-  }
-  .price-item .price-value {
-    font-size: 1rem !important;
-    padding: 6px 10px !important;
-    border-radius: 6px !important;
-    margin-left: 0 !important;
-    margin-top: 2px !important;
-    display: block !important;
-    text-align: left !important;
-  }
-}
-
-/* --- MOBILE MODAL FULL FIX --- */
-@media screen and (max-width: 576px) {
-  .modal {
-    display: flex !important;
-    align-items: flex-start !important;
-    justify-content: center !important;
-    padding: 0 !important;
-    z-index: 3000 !important;
-    background: rgba(0,0,0,0.85) !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    animation: modalMobileFadeIn 0.3s cubic-bezier(.4,0,.2,1);
-  }
-  @keyframes modalMobileFadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  .modal-content {
-    width: 98vw !important;
-    max-width: 98vw !important;
-    min-width: 0 !important;
-    margin: 18px 0 0 0 !important;
-    border-radius: 16px !important;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.10) !important;
-    padding: 0 !important;
-    overflow: visible !important;
-    position: relative !important;
-    animation: modalMobileSlideIn 0.3s cubic-bezier(.4,0,.2,1);
-  }
-  @keyframes modalMobileSlideIn {
-    from { transform: translateY(40px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
-  .modal-header {
-    padding: 18px 16px 12px 16px !important;
-    border-radius: 16px 16px 0 0 !important;
-    background: linear-gradient(135deg, #e71d36, #bd1422) !important;
-    position: relative !important;
-    min-height: 48px !important;
-  }
-  .modal-header h2 {
-    font-size: 1.1rem !important;
-    padding-right: 48px !important;
-    word-break: break-word;
-    color: #fff !important;
-    margin: 0 !important;
-    text-align: left !important;
-  }
-  .close-modal {
-    position: absolute !important;
-    top: 10px !important;
-    right: 10px !important;
-    width: 36px !important;
-    height: 36px !important;
-    font-size: 1.7rem !important;
-    background: #e71d36 !important;
-    color: #fff !important;
-    z-index: 4000 !important;
-    border-radius: 50% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.10) !important;
-    opacity: 1 !important;
-    border: none !important;
-    cursor: pointer !important;
-    transition: background 0.2s, transform 0.2s;
-  }
-  .close-modal:active {
-    background: #c71f37 !important;
-    transform: scale(1.08) rotate(8deg);
-  }
-  .modal-body {
-    flex-direction: column !important;
-    padding: 0 0 10px 0 !important;
-    display: flex !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-  .modal-image {
-    width: 100% !important;
-    min-height: 120px !important;
-    max-height: 180px !important;
-    border-radius: 0 !important;
-    overflow: hidden !important;
-    margin: 0 !important;
-  }
-  .modal-image img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    border-radius: 0 !important;
-    margin: 0 !important;
-  }
-  .modal-info {
-    padding: 14px 12px 10px 12px !important;
-    font-size: 1rem !important;
-    background: #fff !important;
-    border-radius: 0 0 16px 16px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-  #modalDescription {
-    font-size: 0.97rem !important;
-    margin-bottom: 14px !important;
-    padding-bottom: 8px !important;
-    color: #444 !important;
-    text-align: left !important;
-  }
-  #modalDescription:after {
-    width: 40px !important;
-    height: 2px !important;
-    left: 0 !important;
-    background: linear-gradient(to right, #e71d36, transparent) !important;
-  }
-  .price-list:before {
-    font-size: 1rem !important;
-    margin-bottom: 8px !important;
-    color: #e71d36 !important;
-    text-align: left !important;
-  }
-  .price-list {
-    padding: 0 !important;
-    margin: 0 !important;
-    border-top: none !important;
-  }
-  .price-item {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    padding: 8px 0 8px 0 !important;
-    margin-bottom: 6px !important;
-    border-radius: 8px !important;
-    font-size: 1rem !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    background: none !important;
-    box-shadow: none !important;
-    border: none !important;
-  }
-  .price-item strong {
-    font-size: 1rem !important;
-    margin-bottom: 2px !important;
-    color: #222 !important;
-    text-align: left !important;
-  }
-  .price-item span, .price-tag {
-    font-size: 1rem !important;
-    padding: 6px 10px !important;
-    border-radius: 6px !important;
-    margin-left: 0 !important;
-    margin-top: 2px !important;
-    display: block !important;
-    text-align: left !important;
-    background: #fff !important;
-    color: #e71d36 !important;
-    border: 2px solid #e71d36 !important;
-    box-shadow: none !important;
-  }
-  .price-item .price-value {
-    font-size: 1rem !important;
-    padding: 6px 10px !important;
-    border-radius: 6px !important;
-    margin-left: 0 !important;
-    margin-top: 2px !important;
-    display: block !important;
-    text-align: left !important;
-    background: #fff !important;
-    color: #e71d36 !important;
-    border: 2px solid #e71d36 !important;
-    box-shadow: none !important;
-  }
 }
