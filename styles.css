@@ -131,6 +131,7 @@ body {
     overflow: hidden;
     transition: all 0.3s var(--cubic-bezier);
     z-index: 1;
+    pointer-events: auto !important;
 }
 
 .btn-primary::after, .btn-secondary::after {
