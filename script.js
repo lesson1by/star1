@@ -472,45 +472,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // 8. ПРОСТАЯ ИНИЦИАЛИЗАЦИЯ КАСТОМНЫХ СЕЛЕКТОВ
-    document.querySelectorAll('.custom-select-wrapper').forEach(wrapper => {
-        const select = wrapper.querySelector('.custom-select');
-        const trigger = select.querySelector('.custom-select__trigger');
-        const options = select.querySelectorAll('.custom-option');
-        
-        // Открытие/закрытие селекта при клике на триггер
-        trigger.addEventListener('click', function() {
-            // Проверяем, не заблокирован ли селект
-            if (select.classList.contains('disabled')) {
-                return;
-            }
-            select.classList.toggle('open');
-        });
-        
-        // Выбор опции
-        options.forEach(option => {
-            option.addEventListener('click', function() {
-                // Устанавливаем текст в триггер
-                trigger.querySelector('span').textContent = this.textContent;
-                
-                // Закрываем селект
-                select.classList.remove('open');
-                
-                // Устанавливаем значение в оригинальный селект
-                const origSelect = wrapper.querySelector('select');
-                if (origSelect) {
-                    origSelect.value = this.getAttribute('data-value');
-                    origSelect.dispatchEvent(new Event('change'));
-                }
-            });
-        });
-    
-        // Закрытие при клике вне селекта
-        document.addEventListener('click', function(e) {
-            if (!select.contains(e.target)) {
-                select.classList.remove('open');
-            }
-        });
-    });
+    initCustomSelects();
     
     // Защита поля телефона от удаления +7 и форматирование в маске
     const phoneInput = document.getElementById('phone');
@@ -521,35 +483,26 @@ document.addEventListener('DOMContentLoaded', function() {
         // Функция для форматирования телефона
         function formatPhoneNumber(value) {
             // Удаляем все нецифровые символы
-            const digits = value.replace(/\D/g, '');
-            
-            // Обеспечиваем, что начинается с 7
+            let digits = value.replace(/\D/g, '');
+            // Ограничиваем до 11 цифр (включая 7)
+            if (digits.length > 11) digits = digits.slice(0, 11);
             let result = '+7';
-            
-            // Добавляем скобки, пробелы и дефисы в правильных местах
             if (digits.length > 1) {
                 result += ' (';
-            }
-            
-            if (digits.length > 1) {
                 result += digits.substring(1, Math.min(4, digits.length));
             }
-            
             if (digits.length > 4) {
                 result += ') ';
                 result += digits.substring(4, Math.min(7, digits.length));
             }
-            
             if (digits.length > 7) {
                 result += '-';
                 result += digits.substring(7, Math.min(9, digits.length));
             }
-            
             if (digits.length > 9) {
                 result += '-';
                 result += digits.substring(9, Math.min(11, digits.length));
             }
-            
             return result;
         }
         
@@ -932,3 +885,33 @@ document.addEventListener('click', function(event) {
         }
     });
 });
+
+// Инициализация кастомных select'ов
+function initCustomSelects() {
+    document.querySelectorAll('.custom-select-wrapper').forEach(wrapper => {
+        const select = wrapper.querySelector('.custom-select');
+        const trigger = select.querySelector('.custom-select__trigger');
+        const options = select.querySelectorAll('.custom-option');
+        const origSelect = wrapper.querySelector('select');
+        // Открытие/закрытие
+        trigger.onclick = function(e) {
+            if (select.classList.contains('disabled')) return;
+            select.classList.toggle('open');
+        };
+        // Выбор опции
+        options.forEach(option => {
+            option.onclick = function(e) {
+                trigger.querySelector('span').textContent = this.textContent;
+                select.classList.remove('open');
+                if (origSelect) {
+                    origSelect.value = this.getAttribute('data-value');
+                    origSelect.dispatchEvent(new Event('change'));
+                }
+            };
+        });
+        // Закрытие при клике вне
+        document.addEventListener('click', function(e) {
+            if (!select.contains(e.target)) select.classList.remove('open');
+        });
+    });
+}
