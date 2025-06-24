@@ -190,6 +190,37 @@ document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('artistModal');
     const closeBtn = document.querySelector('.close-modal');
     
+    // Открытие модалки по клику на карточку (но не на кнопку)
+    document.querySelectorAll('.star-card, .fairytale-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A' || e.target.closest('a')) return;
+            const starId = this.getAttribute('data-star');
+            const charId = this.getAttribute('data-character');
+            const artistId = starId || charId;
+            if (!artistId || !window.artistData || !window.artistData[artistId]) return;
+            const artist = window.artistData[artistId];
+            document.getElementById('modalTitle').textContent = artist.title;
+            document.getElementById('modalImage').src = artist.image;
+            document.getElementById('modalDescription').textContent = artist.description;
+            const modalPrices = document.getElementById('modalPrices');
+            modalPrices.innerHTML = artist.prices.map(price => `
+                <div class="price-item">
+                    <div class="price-info">
+                        <strong>${price.name}</strong>
+                        <span>(${price.duration})</span>
+                    </div>
+                    <span class="price-tag">${price.price} ₽</span>
+                </div>
+            `).join('');
+            modal.style.display = 'block';
+            setTimeout(() => {
+                modal.classList.add('active');
+                document.body.classList.add('modal-open');
+            }, 10);
+        });
+    });
+
+    // Закрытие модалки по крестику
     if (closeBtn) {
         closeBtn.onclick = function() {
             modal.classList.remove('active');
@@ -199,16 +230,16 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 300);
         };
     }
-    
-    window.onclick = function(event) {
-        if (event.target == modal) {
+    // Закрытие модалки по клику вне окна
+    window.addEventListener('click', function(event) {
+        if (event.target === modal) {
             modal.classList.remove('active');
             setTimeout(() => {
                 modal.style.display = 'none';
                 document.body.classList.remove('modal-open');
             }, 300);
         }
-    };
+    });
 
     // 3. ДАННЫЕ АРТИСТОВ
     const artistData = {
@@ -474,67 +505,42 @@ document.addEventListener('DOMContentLoaded', function() {
     // 8. ПРОСТАЯ ИНИЦИАЛИЗАЦИЯ КАСТОМНЫХ СЕЛЕКТОВ
     initCustomSelects();
     
-    // Защита поля телефона от удаления +7 и форматирование в маске
+    // Маска для телефона
     const phoneInput = document.getElementById('phone');
     if (phoneInput) {
-        // Устанавливаем начальное значение
-        phoneInput.value = "+7 ";
-        
-        // Функция для форматирования телефона
+        phoneInput.value = '+7 ';
         function formatPhoneNumber(value) {
-            // Удаляем все нецифровые символы
             let digits = value.replace(/\D/g, '');
-            // Ограничиваем до 11 цифр (включая 7)
             if (digits.length > 11) digits = digits.slice(0, 11);
             let result = '+7';
             if (digits.length > 1) {
-                result += ' (';
-                result += digits.substring(1, Math.min(4, digits.length));
+                result += ' (' + digits.substring(1, Math.min(4, digits.length));
             }
             if (digits.length > 4) {
-                result += ') ';
-                result += digits.substring(4, Math.min(7, digits.length));
+                result += ') ' + digits.substring(4, Math.min(7, digits.length));
             }
             if (digits.length > 7) {
-                result += '-';
-                result += digits.substring(7, Math.min(9, digits.length));
+                result += '-' + digits.substring(7, Math.min(9, digits.length));
             }
             if (digits.length > 9) {
-                result += '-';
-                result += digits.substring(9, Math.min(11, digits.length));
+                result += '-' + digits.substring(9, Math.min(11, digits.length));
             }
             return result;
         }
-        
-        // Отслеживаем изменения поля
         phoneInput.addEventListener('input', function(e) {
-            // Запоминаем позицию курсора
-            const cursorPosition = this.selectionStart;
-            const oldValueLength = this.value.length;
-            
-            // Форматируем значение
-            const formattedValue = formatPhoneNumber(this.value);
-            this.value = formattedValue;
-            
-            // Пытаемся установить курсор в правильную позицию после форматирования
-            const newValueLength = this.value.length;
-            if (cursorPosition < oldValueLength) {
-                const cursorOffset = newValueLength - oldValueLength;
-                this.setSelectionRange(cursorPosition + cursorOffset, cursorPosition + cursorOffset);
-            }
-            
-            // Проверяем валидность
-            validatePhone();
+            let oldStart = this.selectionStart;
+            let oldLength = this.value.length;
+            let formatted = formatPhoneNumber(this.value);
+            this.value = formatted;
+            // Корректно управляем курсором
+            let newLength = formatted.length;
+            let diff = newLength - oldLength;
+            this.setSelectionRange(oldStart + diff, oldStart + diff);
         });
-        
-        // Не позволяем удалить +7 даже при backspace или delete
         phoneInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Backspace' || e.key === 'Delete') {
-                // Если курсор в начале или выделение включает символы +7
-                if (this.selectionStart <= 3) {
-                    // Запрещаем действие по умолчанию
-                    e.preventDefault();
-                }
+            // Не позволяем удалить +7
+            if ((e.key === 'Backspace' || e.key === 'Delete') && this.selectionStart <= 3) {
+                e.preventDefault();
             }
         });
     }
