@@ -683,7 +683,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 const category = document.getElementById('category').value;
                 const star = document.getElementById('star').value;
                 const character = document.getElementById('character').value;
-                const program = document.getElementById('program').value;
+                const programSelect = document.getElementById('program');
+                const programText = programSelect.options[programSelect.selectedIndex]?.textContent || '';
+
+                // Словари для отображения
+                const categoryMap = {
+                  stars: 'Звёзды',
+                  fairytale: 'Сказка на лапках'
+                };
+                const starMap = {
+                  allegrova: 'Ирина Аллегрова',
+                  pirozhkov: 'Артур Пирожков',
+                  agutin: 'Леонид Агутин'
+                };
+                const characterMap = {
+                  bear: 'Белый Мишка',
+                  cheburashka: 'Чебурашка'
+                };
 
                 fetch('https://hook.eu2.make.com/9obgfbxoc764az2c1tmht04wtdy4d6qt', {
                   method: 'POST',
@@ -691,10 +707,10 @@ document.addEventListener('DOMContentLoaded', function() {
                   body: JSON.stringify({
                     name,
                     phone,
-                    category,
-                    star: category === 'stars' ? star : '',
-                    character: category === 'fairytale' ? character : '',
-                    program
+                    category: categoryMap[category] || category,
+                    star: category === 'stars' ? (starMap[star] || star) : '',
+                    character: category === 'fairytale' ? (characterMap[character] || character) : '',
+                    program: programText
                   })
                 })
                 .then(res => {
