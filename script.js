@@ -1,128 +1,7 @@
-console.log('JS успешно загружен и работает!');
-
+// Упрощенный скрипт для сайта "Звездные Гости"
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Страница полностью загружена');
     
-    // === БУРГЕР-МЕНЮ ===
-    const burger = document.querySelector('.burger');
-    const navLinks = document.querySelector('.nav-links');
-    if (burger && navLinks) {
-        burger.addEventListener('click', function() {
-            navLinks.classList.toggle('nav-active');
-            burger.classList.toggle('toggle');
-        });
-        navLinks.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', function() {
-                navLinks.classList.remove('nav-active');
-                burger.classList.remove('toggle');
-            });
-        });
-    }
-
-    // === КНОПКИ НАВИГАЦИИ ===
-    document.querySelectorAll('.nav-links a[href^="#"]').forEach(link => {
-        link.addEventListener('click', function(e) {
-            const targetId = this.getAttribute('href').replace('#', '');
-            const target = document.getElementById(targetId);
-            if (target) {
-                e.preventDefault();
-                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        });
-    });
-
-    // === КНОПКА "ЗАКАЗАТЬ ВЫСТУПЛЕНИЕ" В HERO ===
-    var heroOrderBtn = document.querySelector('#hero a.btn-primary[href="#form"]');
-    if (heroOrderBtn) {
-        heroOrderBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            document.getElementById('form').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-    }
-
-    // === КНОПКИ "ЗАКАЗАТЬ" НА КАРТОЧКАХ ЗВЁЗД ===
-    document.querySelectorAll('.star-card a.btn-secondary').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            const starId = this.closest('.star-card').getAttribute('data-star');
-            if (starId && typeof showProgramsForCharacter === 'function') {
-                showProgramsForCharacter(starId);
-                document.getElementById('programs').scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        });
-    });
-
-    // === КАРТОЧКИ ЗВЁЗД: ОТКРЫТИЕ МОДАЛКИ ===
-    document.querySelectorAll('.star-card').forEach(card => {
-        card.addEventListener('click', function(e) {
-            if (e.target.tagName === 'A' || e.target.closest('a')) return;
-            const starId = this.getAttribute('data-star');
-            if (starId && typeof openArtistModal === 'function') {
-                openArtistModal(starId);
-            }
-        });
-    });
-
-    // === КНОПКИ "ЗАКАЗАТЬ" В ПРОГРАММАХ ===
-    document.querySelectorAll('.program-card .btn-secondary').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            const star = this.getAttribute('data-star');
-            const program = this.getAttribute('data-program');
-            if (star && program && typeof autoFillOrderForm === 'function') {
-                autoFillOrderForm(star, program);
-                document.getElementById('form').scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        });
-    });
-
-    // === КАРТОЧКИ "СКАЗКИ НА ЛАПКАХ" ===
-    document.querySelectorAll('.fairytale-card').forEach(card => {
-        card.addEventListener('click', function(e) {
-            if (e.target.tagName === 'A' || e.target.closest('a')) return;
-            const charId = this.getAttribute('data-character');
-            if (charId && typeof openFairytaleModal === 'function') {
-                openFairytaleModal(charId);
-            }
-        });
-    });
-    document.querySelectorAll('.fairytale-card .btn-secondary').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            const charId = this.closest('.fairytale-card').getAttribute('data-character');
-            if (charId && typeof autoFillOrderForm === 'function') {
-                autoFillOrderForm(charId, null, 'fairytale');
-                document.getElementById('form').scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        });
-    });
-
-    // === КАРТОЧКИ "ПОЧЕМУ ВЫБИРАЮТ НАС" ===
-    document.querySelectorAll('.benefit-card-link').forEach(card => {
-        card.addEventListener('click', function(e) {
-            e.preventDefault();
-            document.getElementById('form').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-    });
-
-    // === ФУТЕР: КЛИКАБЕЛЬНЫЕ ССЫЛКИ ===
-    document.querySelectorAll('footer a').forEach(link => {
-        link.addEventListener('click', function(e) {
-            if (this.getAttribute('href') && this.getAttribute('href').startsWith('#')) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href').replace('#', '');
-                const target = document.getElementById(targetId);
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            }
-        });
-    });
-
-    // === ФОРМА ЗАКАЗА: ВВОД, ВЫБОР, ОТПРАВКА ===
-    // (оставляю вашу логику, только убеждаюсь, что все элементы доступны и не перекрыты)
-    // ... остальной ваш код ...
-
     // 1. УПРАВЛЕНИЕ СЕКЦИЕЙ ПРОГРАММ
     // Изначально показываем секцию программ, но все контейнеры скрыты
     const programsSection = document.getElementById('programs');
@@ -190,37 +69,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('artistModal');
     const closeBtn = document.querySelector('.close-modal');
     
-    // Открытие модалки по клику на карточку (но не на кнопку)
-    document.querySelectorAll('.star-card, .fairytale-card').forEach(card => {
-        card.addEventListener('click', function(e) {
-            if (e.target.tagName === 'A' || e.target.closest('a')) return;
-            const starId = this.getAttribute('data-star');
-            const charId = this.getAttribute('data-character');
-            const artistId = starId || charId;
-            if (!artistId || !window.artistData || !window.artistData[artistId]) return;
-            const artist = window.artistData[artistId];
-            document.getElementById('modalTitle').textContent = artist.title;
-            document.getElementById('modalImage').src = artist.image;
-            document.getElementById('modalDescription').textContent = artist.description;
-            const modalPrices = document.getElementById('modalPrices');
-            modalPrices.innerHTML = artist.prices.map(price => `
-                <div class="price-item">
-                    <div class="price-info">
-                        <strong>${price.name}</strong>
-                        <span>(${price.duration})</span>
-                    </div>
-                    <span class="price-tag">${price.price} ₽</span>
-                </div>
-            `).join('');
-            modal.style.display = 'block';
-            setTimeout(() => {
-                modal.classList.add('active');
-                document.body.classList.add('modal-open');
-            }, 10);
-        });
-    });
-
-    // Закрытие модалки по крестику
     if (closeBtn) {
         closeBtn.onclick = function() {
             modal.classList.remove('active');
@@ -230,16 +78,16 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 300);
         };
     }
-    // Закрытие модалки по клику вне окна
-    window.addEventListener('click', function(event) {
-        if (event.target === modal) {
+    
+    window.onclick = function(event) {
+        if (event.target == modal) {
             modal.classList.remove('active');
             setTimeout(() => {
                 modal.style.display = 'none';
                 document.body.classList.remove('modal-open');
             }, 300);
         }
-    });
+    };
 
     // 3. ДАННЫЕ АРТИСТОВ
     const artistData = {
@@ -302,6 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // 4. ОБРАБОТКА НАВИГАЦИИ
+    // Обработка клика на элементе навигации "Программы"
     const programsNavLink = document.querySelector('.nav-links a[href="#programs"]');
     if (programsNavLink) {
         programsNavLink.addEventListener('click', function(e) {
@@ -503,44 +352,116 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // 8. ПРОСТАЯ ИНИЦИАЛИЗАЦИЯ КАСТОМНЫХ СЕЛЕКТОВ
-    initCustomSelects();
+    document.querySelectorAll('.custom-select-wrapper').forEach(wrapper => {
+        const select = wrapper.querySelector('.custom-select');
+        const trigger = select.querySelector('.custom-select__trigger');
+        const options = select.querySelectorAll('.custom-option');
+        
+        // Открытие/закрытие селекта при клике на триггер
+        trigger.addEventListener('click', function() {
+            // Проверяем, не заблокирован ли селект
+            if (select.classList.contains('disabled')) {
+                return;
+            }
+            select.classList.toggle('open');
+        });
+        
+        // Выбор опции
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                // Устанавливаем текст в триггер
+                trigger.querySelector('span').textContent = this.textContent;
+                
+                // Закрываем селект
+                select.classList.remove('open');
+                
+                // Устанавливаем значение в оригинальный селект
+                const origSelect = wrapper.querySelector('select');
+                if (origSelect) {
+                    origSelect.value = this.getAttribute('data-value');
+                    origSelect.dispatchEvent(new Event('change'));
+                }
+            });
+        });
     
-    // Маска для телефона
+        // Закрытие при клике вне селекта
+        document.addEventListener('click', function(e) {
+            if (!select.contains(e.target)) {
+                select.classList.remove('open');
+            }
+        });
+    });
+    
+    // Защита поля телефона от удаления +7 и форматирование в маске
     const phoneInput = document.getElementById('phone');
     if (phoneInput) {
-        phoneInput.value = '+7 ';
+        // Устанавливаем начальное значение
+        phoneInput.value = "+7 ";
+        
+        // Функция для форматирования телефона
         function formatPhoneNumber(value) {
-            let digits = value.replace(/\D/g, '');
-            if (digits.length > 11) digits = digits.slice(0, 11);
+            // Удаляем все нецифровые символы
+            const digits = value.replace(/\D/g, '');
+            
+            // Обеспечиваем, что начинается с 7
             let result = '+7';
+            
+            // Добавляем скобки, пробелы и дефисы в правильных местах
             if (digits.length > 1) {
-                result += ' (' + digits.substring(1, Math.min(4, digits.length));
+                result += ' (';
             }
+            
+            if (digits.length > 1) {
+                result += digits.substring(1, Math.min(4, digits.length));
+            }
+            
             if (digits.length > 4) {
-                result += ') ' + digits.substring(4, Math.min(7, digits.length));
+                result += ') ';
+                result += digits.substring(4, Math.min(7, digits.length));
             }
+            
             if (digits.length > 7) {
-                result += '-' + digits.substring(7, Math.min(9, digits.length));
+                result += '-';
+                result += digits.substring(7, Math.min(9, digits.length));
             }
+            
             if (digits.length > 9) {
-                result += '-' + digits.substring(9, Math.min(11, digits.length));
+                result += '-';
+                result += digits.substring(9, Math.min(11, digits.length));
             }
+            
             return result;
         }
+        
+        // Отслеживаем изменения поля
         phoneInput.addEventListener('input', function(e) {
-            let oldStart = this.selectionStart;
-            let oldLength = this.value.length;
-            let formatted = formatPhoneNumber(this.value);
-            this.value = formatted;
-            // Корректно управляем курсором
-            let newLength = formatted.length;
-            let diff = newLength - oldLength;
-            this.setSelectionRange(oldStart + diff, oldStart + diff);
+            // Запоминаем позицию курсора
+            const cursorPosition = this.selectionStart;
+            const oldValueLength = this.value.length;
+            
+            // Форматируем значение
+            const formattedValue = formatPhoneNumber(this.value);
+            this.value = formattedValue;
+            
+            // Пытаемся установить курсор в правильную позицию после форматирования
+            const newValueLength = this.value.length;
+            if (cursorPosition < oldValueLength) {
+                const cursorOffset = newValueLength - oldValueLength;
+                this.setSelectionRange(cursorPosition + cursorOffset, cursorPosition + cursorOffset);
+            }
+            
+            // Проверяем валидность
+            validatePhone();
         });
+        
+        // Не позволяем удалить +7 даже при backspace или delete
         phoneInput.addEventListener('keydown', function(e) {
-            // Не позволяем удалить +7
-            if ((e.key === 'Backspace' || e.key === 'Delete') && this.selectionStart <= 3) {
-                e.preventDefault();
+            if (e.key === 'Backspace' || e.key === 'Delete') {
+                // Если курсор в начале или выделение включает символы +7
+                if (this.selectionStart <= 3) {
+                    // Запрещаем действие по умолчанию
+                    e.preventDefault();
+                }
             }
         });
     }
@@ -667,7 +588,30 @@ document.addEventListener('DOMContentLoaded', function() {
         categorySelect.addEventListener('change', function() {
             const starsGroup = document.getElementById('stars-select-group');
             const fairytaleGroup = document.getElementById('fairytale-select-group');
-             
+            
+            // Скрываем оба селекта персонажей
+            starsGroup.style.display = 'none';
+            fairytaleGroup.style.display = 'none';
+            
+            // Сбрасываем значения селектов персонажей
+            if (starSelect) starSelect.value = '';
+            if (characterSelect) characterSelect.value = '';
+            
+            // Сбрасываем кастомные селекты
+            document.querySelector('#star').parentNode.querySelector('.custom-select__trigger span').textContent = 'Выберите звезду';
+            document.querySelector('#character').parentNode.querySelector('.custom-select__trigger span').textContent = 'Выберите персонажа';
+            
+            // Блокируем селект программ
+            updateProgramOptions(null);
+            
+            // Показываем соответствующий селект в зависимости от выбранной категории
+            if (this.value === 'stars') {
+                starsGroup.style.display = 'block';
+            } else if (this.value === 'fairytale') {
+                fairytaleGroup.style.display = 'block';
+            }
+        });
+    }
     
     // Обработчики выбора персонажа
     if (starSelect) {
@@ -733,119 +677,61 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             if (isValid) {
-                // Сброс классов ошибок у всех инпутов и селектов ДО анимации отправки
-                form.querySelectorAll('input, select').forEach(el => {
-                    el.classList.remove('error');
-                });
-                // Скрываем сообщения об ошибках ДО анимации отправки
-                form.querySelectorAll('.field-error, .error-message').forEach(el => {
-                    el.style.display = 'none';
-                });
-
-                // Карты преобразования для красивых значений
-                const categoryMap = {
-                    stars: "Звёзды",
-                    fairytale: "Сказка на лапках"
-                };
-                const starMap = {
-                    allegrova: "Ирина Аллегрова",
-                    agutin: "Леонид Агутин",
-                    pirozhkov: "Артур Пирожков"
-                };
-                const characterMap = {
-                    cheburashka: "Чебурашка",
-                    bear: "Белый Мишка"
-                };
-                const programMap = {
-                    program_0: "ШОУ-МИНИ (10 минут)",
-                    program_1: "ПРОГРАММА 18+ (15 минут)",
-                    program_2: "ШОУ С ОГОНЬКОМ (15 минут)",
-                    kuryer: "ЗВЁЗДНЫЙ КУРЬЕР (5 минут)",
-                    express: "ЭКСПРЕСС-ПОЗДРАВЛЕНИЕ (5–7 минут)",
-                    mini: "ШОУ-МИНИ (10 минут)",
-                    fire: "ШОУ С ОГОНЬКОМ (15 минут)",
-                    greetings: "ПОЗДРАВЛЕНИЕ (5 минут)",
-                    full: "ПОЛНАЯ ПРОГРАММА (15 минут)"
-                };
-
-                // Собираем данные формы с красивыми значениями
-                let formData = {
-                    name: nameInput.value,
-                    phone: phoneInput.value,
-                    category: categoryMap[categorySelect.value] || categorySelect.value,
-                    star: starMap[starSelect ? starSelect.value : ""] || "",
-                    character: characterMap[characterSelect ? characterSelect.value : ""] || "",
-                    program: programSelect.options[programSelect.selectedIndex] ? programSelect.options[programSelect.selectedIndex].text : ""
-                };
-
-                // Удаляем пустые поля star и character
-                if (!formData.star) delete formData.star;
-                if (!formData.character) delete formData.character;
-
-                // Отправляем данные на Webhook Make
-                fetch('https://hook.eu2.make.com/9obgfbxoc764az2c1tmht04wtdy4d6qt', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Ошибка отправки');
-                    }
-                    // Показываем успешное сообщение
-                    const submitBtn = form.querySelector('.btn-primary');
-                    const originalText = submitBtn.innerHTML;
+                // Анимация отправки формы
+                const submitBtn = form.querySelector('.btn-primary');
+                const originalText = submitBtn.innerHTML;
+                
+                // Добавляем анимацию загрузки на кнопку
+                submitBtn.classList.add('form-submit-animation');
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
+                submitBtn.disabled = true;
+                
+                // Добавляем эффект волны по всей форме
+                const formContainer = document.querySelector('.form-container');
+                formContainer.classList.add('highlight');
+                
+                // Имитация отправки данных на сервер
+                setTimeout(() => {
+                    submitBtn.innerHTML = '<i class="fas fa-check"></i> Отправлено!';
+                    submitBtn.style.background = 'linear-gradient(45deg, #e9414c, #d02c39)';
+                    formContainer.classList.remove('highlight');
+                    formContainer.classList.add('form-success');
                     
-                    // Добавляем анимацию загрузки на кнопку
-                    submitBtn.classList.add('form-submit-animation');
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
-                    submitBtn.disabled = true;
-                    
-                    // Добавляем эффект волны по всей форме
-                    const formContainer = document.querySelector('.form-container');
-                    formContainer.classList.add('highlight');
-                    
-                    // Сбрасываем форму и обновляем селекты
-                    form.reset();
-
                     // Добавляем конфетти-эффект при успешной отправке
                     if (typeof createConfetti === 'function') {
                         createConfetti();
                     }
                     
-                    // Сбрасываем форму и обновляем селекты
-                    form.reset();
-                    
-                    // Сбрасываем селекты программ и персонажей
-                    document.getElementById('stars-select-group').style.display = 'none';
-                    document.getElementById('fairytale-select-group').style.display = 'none';
-                    
-                    // Сбрасываем кастомные селекты
-                    document.querySelector('#category').parentNode.querySelector('.custom-select__trigger span').textContent = 'Не выбрано';
-                    document.querySelector('#star').parentNode.querySelector('.custom-select__trigger span').textContent = 'Выберите звезду';
-                    document.querySelector('#character').parentNode.querySelector('.custom-select__trigger span').textContent = 'Выберите персонажа';
-                    
-                    // Блокируем селект программ
-                    updateProgramOptions(null);
-                    
-                    // Восстанавливаем значение телефона
-                    phoneInput.value = "+7 ";
-                })
-                .catch(error => {
-                    console.error('Ошибка:', error);
-                    // Показываем сообщение об ошибке
-                    submitBtn.innerHTML = '<i class="fas fa-times"></i> Ошибка';
-                    submitBtn.style.background = '#dc3545';
-                    
-                    // Возвращаем кнопку в исходное состояние через 2 секунды
+                    // После успешной отправки
                     setTimeout(() => {
+                        // Не создаем дополнительное уведомление, так как оно уже создается в index.html
+                        
+                        // Возвращаем кнопку в исходное состояние
                         submitBtn.innerHTML = originalText;
                         submitBtn.disabled = false;
                         submitBtn.style.background = '';
+                        submitBtn.classList.remove('form-submit-animation');
+                        formContainer.classList.remove('form-success');
+                        
+                        // Сбрасываем форму и обновляем селекты
+                        form.reset();
+                        
+                        // Сбрасываем селекты программ и персонажей
+                        document.getElementById('stars-select-group').style.display = 'none';
+                        document.getElementById('fairytale-select-group').style.display = 'none';
+                        
+                        // Сбрасываем кастомные селекты
+                        document.querySelector('#category').parentNode.querySelector('.custom-select__trigger span').textContent = 'Не выбрано';
+                        document.querySelector('#star').parentNode.querySelector('.custom-select__trigger span').textContent = 'Выберите звезду';
+                        document.querySelector('#character').parentNode.querySelector('.custom-select__trigger span').textContent = 'Выберите персонажа';
+                        
+                        // Блокируем селект программ
+                        updateProgramOptions(null);
+                        
+                        // Восстанавливаем значение телефона
+                        phoneInput.value = "+7 ";
                     }, 2000);
-                });
+                }, 1500);
             }
         });
     }
@@ -855,69 +741,73 @@ document.addEventListener('DOMContentLoaded', function() {
     if (firstStarId) {
         showProgramsForCharacter(firstStarId);
     }
-});
 
-document.addEventListener('click', function(event) {
-    // Закрыть бургер-меню, если клик вне меню и вне бургера
+    // === БУРГЕР-МЕНЮ ДЛЯ МОБИЛЬНОЙ НАВИГАЦИИ ===
     const burger = document.querySelector('.burger');
-    const navLinks = document.querySelector('.nav-links');
-    if (navLinks && burger && navLinks.classList.contains('nav-active')) {
-        if (!navLinks.contains(event.target) && !burger.contains(event.target)) {
-            navLinks.classList.remove('nav-active');
-            burger.classList.remove('toggle');
-        }
-    }
-    // Закрыть все кастомные select, если клик вне них
-    document.querySelectorAll('.custom-select.open').forEach(select => {
-        if (!select.contains(event.target)) {
-            select.classList.remove('open');
-        }
-    });
-    // Закрыть модалку артиста, если клик вне модалки
-    const modal = document.getElementById('artistModal');
-    if (modal && modal.classList.contains('active')) {
-        if (!modal.contains(event.target) && event.target !== modal) {
-            modal.classList.remove('active');
-            setTimeout(() => {
-                modal.style.display = 'none';
-                document.body.classList.remove('modal-open');
-            }, 300);
-        }
-    }
-    // Закрыть другие overlay, если они есть (пример)
-    document.querySelectorAll('.overlay').forEach(overlay => {
-        if (overlay.style.display === 'block' && !overlay.contains(event.target)) {
-            overlay.style.display = 'none';
-        }
-    });
-});
+    const nav = document.querySelector('.nav-links');
+    const navLinks = document.querySelectorAll('.nav-links li');
 
-// Инициализация кастомных select'ов
-function initCustomSelects() {
-    document.querySelectorAll('.custom-select-wrapper').forEach(wrapper => {
-        const select = wrapper.querySelector('.custom-select');
-        const trigger = select.querySelector('.custom-select__trigger');
-        const options = select.querySelectorAll('.custom-option');
-        const origSelect = wrapper.querySelector('select');
-        // Открытие/закрытие
-        trigger.onclick = function(e) {
-            if (select.classList.contains('disabled')) return;
-            select.classList.toggle('open');
-        };
-        // Выбор опции
-        options.forEach(option => {
-            option.onclick = function(e) {
-                trigger.querySelector('span').textContent = this.textContent;
-                select.classList.remove('open');
-                if (origSelect) {
-                    origSelect.value = this.getAttribute('data-value');
-                    origSelect.dispatchEvent(new Event('change'));
-                }
-            };
+    if (burger && nav) {
+        burger.addEventListener('click', function() {
+            nav.classList.toggle('nav-active');
+            burger.classList.toggle('toggle');
         });
-        // Закрытие при клике вне
-        document.addEventListener('click', function(e) {
-            if (!select.contains(e.target)) select.classList.remove('open');
+        // При клике на ссылку меню — закрываем меню
+        nav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function() {
+                nav.classList.remove('nav-active');
+                burger.classList.remove('toggle');
+            });
+        });
+    }
+
+    // === ПЛАВНЫЙ СКРОЛЛ С УЧЁТОМ ФИКСИРОВАННОГО ХЕДЕРА ===
+    const header = document.querySelector('header');
+    const headerHeight = header ? header.offsetHeight : 70;
+    document.querySelectorAll('.nav-links a[href^="#"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('href').replace('#', '');
+            const target = document.getElementById(targetId);
+            if (target) {
+                e.preventDefault();
+                const y = target.getBoundingClientRect().top + window.pageYOffset - headerHeight;
+                window.scrollTo({ top: y, behavior: 'smooth' });
+                // Закрываем мобильное меню, если оно открыто
+                if (nav.classList.contains('nav-active')) {
+                    nav.classList.remove('nav-active');
+                    burger.classList.remove('toggle');
+                }
+            }
         });
     });
-}
+
+    // === КОПИРОВАНИЕ В БУФЕР ОБМЕНА ===
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const text = this.dataset.copy || this.textContent || this.value;
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    btn.classList.add('copied');
+                    setTimeout(() => btn.classList.remove('copied'), 1200);
+                });
+            } else {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                try { document.execCommand('copy'); } catch (err) {}
+                document.body.removeChild(textarea);
+                btn.classList.add('copied');
+                setTimeout(() => btn.classList.remove('copied'), 1200);
+            }
+        });
+    });
+
+    // === ФИКС КАСТОМНЫХ СЕЛЕКТОВ: закрытие при любом клике вне ===
+    document.addEventListener('click', function(e) {
+        document.querySelectorAll('.custom-select.open').forEach(sel => {
+            if (!sel.contains(e.target)) sel.classList.remove('open');
+        });
+    });
+}); 
