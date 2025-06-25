@@ -631,6 +631,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (form) {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
+            
             let isValid = true;
                 
             // Проверка имени
@@ -675,76 +676,63 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
             
-            if (!isValid) return;
-
-            // === ОТПРАВКА ДАННЫХ НА MAKE ===
-            const nameInput = document.getElementById('name-input');
-            const phoneInput = document.getElementById('phone');
-            const categorySelect = document.getElementById('category');
-            const starSelect = document.getElementById('star');
-            const characterSelect = document.getElementById('character');
-            const programSelect = document.getElementById('program');
-            const formContainer = document.querySelector('.form-container');
-            const submitBtn = form.querySelector('.btn-primary');
-            const originalText = submitBtn.innerHTML;
-
-            submitBtn.classList.add('form-submit-animation');
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
-            submitBtn.disabled = true;
-            formContainer.classList.add('highlight');
-
-            fetch('https://hook.eu2.make.com/9obgfbxoc764az2c1tmht04wtdy4d6qt', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: nameInput.value,
-                    phone: phoneInput.value,
-                    category: categorySelect.value,
-                    star: starSelect.value,
-                    character: characterSelect.value,
-                    program: programSelect.value
-                })
-            })
-            .then(response => {
-                if (!response.ok) throw new Error('Ошибка отправки');
-                return response.json().catch(() => ({}));
-            })
-            .then(() => {
+            if (isValid) {
+                // Анимация отправки формы
+                const submitBtn = form.querySelector('.btn-primary');
+                const originalText = submitBtn.innerHTML;
+                
+                // Добавляем анимацию загрузки на кнопку
+                submitBtn.classList.add('form-submit-animation');
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
+                submitBtn.disabled = true;
+                
+                // Добавляем эффект волны по всей форме
+                const formContainer = document.querySelector('.form-container');
+                formContainer.classList.add('highlight');
+                
+                // Имитация отправки данных на сервер
                 setTimeout(() => {
-                    submitBtn.classList.remove('form-submit-animation');
                     submitBtn.innerHTML = '<i class="fas fa-check"></i> Отправлено!';
                     submitBtn.style.background = 'linear-gradient(45deg, #e9414c, #d02c39)';
                     formContainer.classList.remove('highlight');
                     formContainer.classList.add('form-success');
+                    
+                    // Добавляем конфетти-эффект при успешной отправке
+                    if (typeof createConfetti === 'function') {
+                        createConfetti();
+                    }
+                    
+                    // После успешной отправки
                     setTimeout(() => {
+                        // Не создаем дополнительное уведомление, так как оно уже создается в index.html
+                        
+                        // Возвращаем кнопку в исходное состояние
                         submitBtn.innerHTML = originalText;
                         submitBtn.disabled = false;
                         submitBtn.style.background = '';
+                        submitBtn.classList.remove('form-submit-animation');
                         formContainer.classList.remove('form-success');
+                        
+                        // Сбрасываем форму и обновляем селекты
                         form.reset();
+                        
+                        // Сбрасываем селекты программ и персонажей
                         document.getElementById('stars-select-group').style.display = 'none';
                         document.getElementById('fairytale-select-group').style.display = 'none';
+                        
+                        // Сбрасываем кастомные селекты
                         document.querySelector('#category').parentNode.querySelector('.custom-select__trigger span').textContent = 'Не выбрано';
                         document.querySelector('#star').parentNode.querySelector('.custom-select__trigger span').textContent = 'Выберите звезду';
                         document.querySelector('#character').parentNode.querySelector('.custom-select__trigger span').textContent = 'Выберите персонажа';
+                        
+                        // Блокируем селект программ
                         updateProgramOptions(null);
+                        
+                        // Восстанавливаем значение телефона
                         phoneInput.value = "+7 ";
                     }, 2000);
                 }, 1500);
-            })
-            .catch(() => {
-                submitBtn.classList.remove('form-submit-animation');
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-                formContainer.classList.remove('highlight');
-                // Показываем тост об ошибке
-                const errorToast = document.createElement('div');
-                errorToast.className = 'toast error-toast';
-                errorToast.innerHTML = `<div class="icon"><i class="fas fa-exclamation-circle"></i></div><div class="content"><h4>Ошибка!</h4><p>Не удалось отправить заявку. Попробуйте ещё раз.</p></div>`;
-                document.body.appendChild(errorToast);
-                setTimeout(() => errorToast.classList.add('show'), 100);
-                setTimeout(() => errorToast.remove(), 5000);
-            });
+            }
         });
     }
     
