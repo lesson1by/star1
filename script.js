@@ -701,6 +701,15 @@ document.addEventListener('DOMContentLoaded', function() {
                   cheburashka: 'Чебурашка'
                 };
 
+                // Формируем итоговое сообщение
+                let message = `Новая заявка с сайта!\nИмя: ${name}\nТелефон: ${phone}\nКатегория: ${categoryMap[category] || category}`;
+                if (category === 'stars') {
+                  message += `\nЗвезда: ${starMap[star] || star}`;
+                } else if (category === 'fairytale') {
+                  message += `\nПерсонаж: ${characterMap[character] || character}`;
+                }
+                message += `\nПрограмма: ${programText}`;
+
                 fetch('https://hook.eu2.make.com/9obgfbxoc764az2c1tmht04wtdy4d6qt', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
@@ -710,7 +719,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     category: categoryMap[category] || category,
                     star: category === 'stars' ? (starMap[star] || star) : '',
                     character: category === 'fairytale' ? (characterMap[character] || character) : '',
-                    program: programText
+                    program: programText,
+                    message
                   })
                 })
                 .then(res => {
