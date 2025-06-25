@@ -677,6 +677,34 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             if (isValid) {
+                // --- ОТПРАВКА НА MAKE ---
+                const name = document.getElementById('name-input').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const category = document.getElementById('category').value;
+                const star = document.getElementById('star').value;
+                const character = document.getElementById('character').value;
+                const program = document.getElementById('program').value;
+
+                fetch('https://hook.eu2.make.com/9obgfbxoc764az2c1tmht04wtdy4d6qt', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    name,
+                    phone,
+                    category,
+                    star: category === 'stars' ? star : '',
+                    character: category === 'fairytale' ? character : '',
+                    program
+                  })
+                })
+                .then(res => {
+                  if (!res.ok) throw new Error('Ошибка отправки');
+                  // Можно добавить свою анимацию/уведомление об успехе
+                })
+                .catch(() => {
+                  alert('Ошибка отправки. Попробуйте ещё раз.');
+                });
+                // --- КОНЕЦ FETCH ---
                 // Анимация отправки формы
                 const submitBtn = form.querySelector('.btn-primary');
                 const originalText = submitBtn.innerHTML;
