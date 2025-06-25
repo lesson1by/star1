@@ -684,7 +684,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const star = document.getElementById('star').value;
                 const character = document.getElementById('character').value;
                 const programSelect = document.getElementById('program');
-                const programText = programSelect.options[programSelect.selectedIndex]?.textContent || '';
+                const program = programSelect.options[programSelect.selectedIndex]?.textContent || '';
 
                 // Словари для отображения
                 const categoryMap = {
@@ -710,7 +710,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     category: categoryMap[category] || category,
                     star: category === 'stars' ? (starMap[star] || star) : '',
                     character: category === 'fairytale' ? (characterMap[character] || character) : '',
-                    program: programText
+                    program
                   })
                 })
                 .then(res => {
