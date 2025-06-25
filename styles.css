@@ -131,7 +131,6 @@ body {
     overflow: hidden;
     transition: all 0.3s var(--cubic-bezier);
     z-index: 1;
-    pointer-events: auto !important;
 }
 
 .btn-primary::after, .btn-secondary::after {
@@ -1360,8 +1359,6 @@ footer {
 
 @media screen and (max-width: 768px) {
     .nav-links {
-        pointer-events: none;
-        transform: translateX(100%);
         position: absolute;
         right: 0;
         top: 70px;
@@ -1371,12 +1368,13 @@ footer {
         flex-direction: column;
         align-items: center;
         padding-top: 50px;
+        transform: translateX(100%);
+        transition: transform 0.5s ease-in;
         box-shadow: -5px 0 10px rgba(0, 0, 0, 0.1);
     }
     
     .nav-active {
-        pointer-events: auto;
-        transform: translateX(0);
+        transform: translateX(0%);
     }
     
     .burger {
@@ -3026,4 +3024,24 @@ section#form {
     background: rgba(233, 65, 76, 0.1);
     color: #e9414c;
     box-shadow: 0 3px 8px rgba(233, 65, 76, 0.2);
+}
+
+@media (max-width: 768px) {
+  .hero-content {
+    pointer-events: auto !important;
+  }
+  #hero {
+    pointer-events: auto !important;
+  }
+  .btn-primary, .btn-secondary {
+    min-width: 44px;
+    min-height: 44px;
+    font-size: 1.1rem;
+    padding: 16px 0;
+  }
+}
+
+/* Убираю pointer-events: none с hero-content для всех экранов */
+.hero-content {
+  pointer-events: auto !important;
 }
