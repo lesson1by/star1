@@ -16,6 +16,7 @@
 .white-text {
     color: #fff;
     background: none;
+    background-clip: initial; /* Added for compatibility */
     -webkit-background-clip: initial;
     -webkit-text-fill-color: #fff;
 }
@@ -102,6 +103,7 @@ body {
     padding-bottom: 15px;
     background: linear-gradient(90deg, var(--text-color), var(--primary-color), var(--text-color));
     background-size: 200% 100%;
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: gradientMove 8s ease infinite;
@@ -2744,8 +2746,8 @@ body.modal-open {
   object-fit: contain !important; /* Ensure no cropping */
 }
 
-.review-author {
-// ... existing code ...
+
+
 @media (max-width: 900px) {
   #reviews-modal {
     padding: 24px 2vw 24px 2vw;
